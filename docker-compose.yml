@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # バックエンドサービス（FastAPI）の設定
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # ローカルのbackendフォルダをコンテナの/appに同期させる
+      # これにより、コードを変更すると自動でリロードされる
+      - ./backend:/app
+    environment:
+      # .envファイルから環境変数を読み込む
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  # フロントエンドサービス（Next.js）の設定
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      # ローカルのfrontendフォルダをコンテナの/appに同期させる
+      - ./frontend:/app
+      # ただし、node_modulesはコンテナ内のものを使う（重要）
+      - /app/node_modules
+    depends_on:
+      # backendが起動してからfrontendを起動する
+      - backend

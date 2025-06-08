@@ -2,14 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 # backend/models/product.py
 
-from ..database import Base  # ✅ 相対パスに変更
+from .database import Base, engine
 
 from .models import product
+from .models import setting
 from .routers import mercari, price, settings
 
 
 # データベースのテーブル作成（初回のみ実行される）
 product.Base.metadata.create_all(bind=engine)
+setting.Base.metadata.create_all(bind=engine)
 
 # FastAPIアプリケーションの作成
 app = FastAPI()
